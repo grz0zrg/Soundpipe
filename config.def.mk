@@ -84,6 +84,7 @@ vardelay \
 peakeq \
 modalres \
 phasewarp \
+tread \
 
 TANGLED += \
 tangled/osc.o \
