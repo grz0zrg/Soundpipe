@@ -2,7 +2,7 @@ typedef struct  {
     SPFLOAT delay;
     uint32_t bufpos;
     uint32_t bufsize;
-    sp_auxdata buf;
+    SPFLOAT *buf;
 } sp_reverse;
 
 int sp_reverse_create(sp_reverse **p);
