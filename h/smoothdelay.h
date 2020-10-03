@@ -8,11 +8,11 @@ typedef struct {
 
     uint32_t maxbuf;
 
-    sp_auxdata buf1;
+    SPFLOAT *buf1;
     uint32_t bufpos1;
     uint32_t deltime1;
 
-    sp_auxdata buf2;
+    SPFLOAT *buf2;
     uint32_t bufpos2;
     uint32_t deltime2;
     int curbuf;

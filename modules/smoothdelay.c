@@ -20,9 +20,8 @@ int sp_smoothdelay_create(sp_smoothdelay **p)
 
 int sp_smoothdelay_destroy(sp_smoothdelay **p)
 {
-    sp_smoothdelay *pp = *p;
-    sp_auxdata_free(&pp->buf1);
-    sp_auxdata_free(&pp->buf2);
+    free((*p)->buf1);
+    free((*p)->buf2);
     free(*p);
     return SP_OK;
 }
@@ -39,11 +38,11 @@ int sp_smoothdelay_init(sp_data *sp, sp_smoothdelay *p,
     p->maxbuf = n - 1;
     p->maxcount = interp;
 
-    sp_auxdata_alloc(&p->buf1, n * sizeof(SPFLOAT));
+    p->buf1 = calloc(1, n * sizeof(SPFLOAT));
     p->bufpos1 = 0;
     p->deltime1 = (uint32_t) (p->del * sp->sr);
 
-    sp_auxdata_alloc(&p->buf2, n * sizeof(SPFLOAT));
+    p->buf2 = calloc(1, n * sizeof(SPFLOAT));
     p->bufpos2 = 0;
     p->deltime2 = p->deltime1;
 
@@ -100,8 +99,8 @@ int sp_smoothdelay_compute(sp_data *sp, sp_smoothdelay *p, SPFLOAT *in, SPFLOAT 
 
 
 
-    buf1 = (SPFLOAT *)p->buf1.ptr;
-    buf2 = (SPFLOAT *)p->buf2.ptr;
+    buf1 = p->buf1;
+    buf2 = p->buf2;
     it = (SPFLOAT)p->counter / p->maxcount;
     if (p->counter != 0) p->counter--;
 
