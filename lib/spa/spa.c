@@ -1,3 +1,4 @@
+/* This file is placed in the public domain */
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>

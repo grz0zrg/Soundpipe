@@ -2,7 +2,7 @@ typedef struct {
     SPFLOAT time;
     SPFLOAT feedback;
     SPFLOAT last;
-    sp_auxdata buf;
+    SPFLOAT *buf;
     uint32_t bufsize;
     uint32_t bufpos;
 } sp_delay;
