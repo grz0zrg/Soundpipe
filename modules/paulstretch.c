@@ -8,7 +8,6 @@
  * This implementation has been placed in the public domain.
  */
 
-
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -78,11 +77,11 @@ int sp_paulstretch_create(sp_paulstretch **p)
 int sp_paulstretch_destroy(sp_paulstretch **p)
 {
     sp_paulstretch *pp = *p;
-    sp_auxdata_free(&pp->m_window);
-    sp_auxdata_free(&pp->m_old_windowed_buf);
-    sp_auxdata_free(&pp->m_hinv_buf);
-    sp_auxdata_free(&pp->m_buf);
-    sp_auxdata_free(&pp->m_output);
+    free(&pp->window);
+    free(&pp->old_windowed_buf);
+    free(&pp->hinv_buf);
+    free(&pp->buf);
+    free(&pp->output);
     kiss_fftr_free(pp->fft);
     kiss_fftr_free(pp->ifft);
     KISS_FFT_FREE(pp->tmp1);
@@ -105,25 +104,18 @@ int sp_paulstretch_init(sp_data *sp, sp_paulstretch *p, sp_ftbl *ft, SPFLOAT win
     p->half_windowsize = p->windowsize / 2;
     p->displace_pos = (p->windowsize * 0.5) / p->stretch;
 
-    sp_auxdata_alloc(&p->m_window, sizeof(SPFLOAT) * p->windowsize);
-    p->window = p->m_window.ptr;
+    p->window = calloc(1, sizeof(SPFLOAT) * p->windowsize);
+    p->old_windowed_buf = calloc(1, sizeof(SPFLOAT) * p->windowsize);
+    p->hinv_buf = calloc(1, sizeof(SPFLOAT) * p->half_windowsize);
+    p->buf = calloc(1, sizeof(SPFLOAT) * p->windowsize);
 
-    sp_auxdata_alloc(&p->m_old_windowed_buf, sizeof(SPFLOAT) * p->windowsize);
-    p->old_windowed_buf = p->m_old_windowed_buf.ptr;
-
-    sp_auxdata_alloc(&p->m_hinv_buf, sizeof(SPFLOAT) * p->half_windowsize);
-    p->hinv_buf = p->m_hinv_buf.ptr;
-
-    sp_auxdata_alloc(&p->m_buf, sizeof(SPFLOAT) * p->windowsize);
-    p->buf = p->m_buf.ptr;
-
-    sp_auxdata_alloc(&p->m_output, sizeof(SPFLOAT) * p->half_windowsize);
-    p->output = p->m_output.ptr;
+    p->output = calloc(1, sizeof(SPFLOAT) * p->half_windowsize);
 
     /* Create Hann window */
     for (i = 0; i < p->windowsize; i++) {
         p->window[i] = 0.5 - cos(i * 2.0 * M_PI / (p->windowsize - 1)) * 0.5;
     }
+
     /* creatve inverse hann window */
     hinv_sqrt2 = (1 + sqrt(0.5)) * 0.5;
     for (i = 0; i < p->half_windowsize; i++) {
