@@ -3,7 +3,6 @@ typedef struct {
     uint32_t pos;
     uint32_t bufsize;
     sp_audio spa;
-    sp_auxdata aux;
 } sp_sparec;
 
 int sp_sparec_create(sp_sparec **p);
