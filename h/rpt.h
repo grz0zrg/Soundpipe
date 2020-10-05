@@ -7,8 +7,9 @@ typedef struct sp_rpt{
     uint32_t size;
     SPFLOAT bpm;
     int div, rep;
-    sp_auxdata aux;
+    SPFLOAT *buf;
     int rc;
+    uint32_t maxlen;
 } sp_rpt;
 
 int sp_rpt_create(sp_rpt **p);
