@@ -14,8 +14,8 @@ int sp_spa_create(sp_spa **p)
 int sp_spa_destroy(sp_spa **p)
 {
     sp_spa *pp = *p;
-    sp_auxdata_free(&pp->aux);
     spa_close(&pp->spa);
+    free(pp->buf);
     free(*p);
     return SP_OK;
 }
@@ -29,21 +29,19 @@ int sp_spa_init(sp_data *sp, sp_spa *p, const char *filename)
     p->pos = 0;
 
     p->bufsize = SPA_BUFSIZE;
-    sp_auxdata_alloc(&p->aux, sizeof(SPFLOAT) * p->bufsize);
-
-    p->buf = p->aux.ptr;
+    p->buf = calloc(1, sizeof(SPFLOAT) * p->bufsize);
 
     return SP_OK;
 }
 
 int sp_spa_compute(sp_data *sp, sp_spa *p, SPFLOAT *in, SPFLOAT *out)
 {
-    if(p->bufsize == 0) {
+    if (p->bufsize == 0) {
         *out = 0.0;
         return SP_OK;
     }
 
-    if(p->pos == 0) {
+    if (p->pos == 0) {
         p->bufsize = spa_read_buf(sp, &p->spa, p->buf, SPA_BUFSIZE);
         if(p->bufsize == 0) {
             *out = 0.0;
