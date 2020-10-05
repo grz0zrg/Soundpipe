@@ -12,11 +12,6 @@
 
 typedef unsigned long sp_frame;
 
-typedef struct sp_auxdata {
-    size_t size;
-    void *ptr;
-} sp_auxdata;
-
 typedef struct sp_data {
     SPFLOAT *out;
     int sr;
@@ -31,9 +26,6 @@ typedef struct {
     char state;
     SPFLOAT val;
 } sp_param;
-
-int sp_auxdata_alloc(sp_auxdata *aux, size_t size);
-int sp_auxdata_free(sp_auxdata *aux);
 
 int sp_create(sp_data **spp);
 int sp_createn(sp_data **spp, int nchan);

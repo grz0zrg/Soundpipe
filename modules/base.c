@@ -155,21 +155,6 @@ int sp_process_plot(sp_data *sp, void *ud, void (*callback)(sp_data *, void *))
     return SP_OK;
 }
 
-int sp_auxdata_alloc(sp_auxdata *aux, size_t size)
-{
-    aux->ptr = malloc(size);
-    aux->size = size;
-    memset(aux->ptr, 0, size);
-    return SP_OK;
-}
-
-int sp_auxdata_free(sp_auxdata *aux)
-{
-    free(aux->ptr);
-    return SP_OK;
-}
-
-
 SPFLOAT sp_midi2cps(SPFLOAT nn)
 {
     return pow(2, (nn - 69.0) / 12.0) * 440.0;
