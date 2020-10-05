@@ -15,10 +15,10 @@ int sp_lpc_destroy(sp_lpc **lpc)
 {
     sp_lpc *plpc;
     plpc = *lpc;
-    sp_auxdata_free(&plpc->m_e);
-    sp_auxdata_free(&plpc->m_d);
-    sp_auxdata_free(&plpc->m_out);
-    sp_auxdata_free(&plpc->m_in);
+    free(plpc->e);
+    free(plpc->d);
+    free(plpc->out);
+    free(plpc->in);
     free(*lpc);
     return SP_OK;
 }
@@ -34,16 +34,11 @@ int sp_lpc_init(sp_data *sp, sp_lpc *lpc, int framesize)
     lpc->framesize = framesize;
     openlpc_sr(sp->sr / lpc->block);
 
-    sp_auxdata_alloc(&lpc->m_d, openlpc_get_decoder_state_size());
-    sp_auxdata_alloc(&lpc->m_e, openlpc_get_encoder_state_size());
-    lpc->d = lpc->m_d.ptr;
-    lpc->e = lpc->m_e.ptr;
+    lpc->d = calloc(1, openlpc_get_decoder_state_size());
+    lpc->e = calloc(1, openlpc_get_encoder_state_size());
 
-    sp_auxdata_alloc(&lpc->m_in, sizeof(short) * framesize);
-    sp_auxdata_alloc(&lpc->m_out, sizeof(short) * framesize);
-
-    lpc->out = lpc->m_out.ptr;
-    lpc->in = lpc->m_in.ptr;
+    lpc->in = calloc(1, sizeof(short) * framesize);
+    lpc->out = calloc(1, sizeof(short) * framesize);
 
     init_openlpc_decoder_state(lpc->d, framesize);
     init_openlpc_encoder_state(lpc->e, framesize);

@@ -11,10 +11,6 @@ typedef struct {
     unsigned int clock;
     unsigned int block;
     int framesize;
-    sp_auxdata m_in;
-    sp_auxdata m_out;
-    sp_auxdata m_e;
-    sp_auxdata m_d;
     int mode;
     sp_ftbl *ft;
 } sp_lpc;
