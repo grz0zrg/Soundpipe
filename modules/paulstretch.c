@@ -77,11 +77,11 @@ int sp_paulstretch_create(sp_paulstretch **p)
 int sp_paulstretch_destroy(sp_paulstretch **p)
 {
     sp_paulstretch *pp = *p;
-    free(&pp->window);
-    free(&pp->old_windowed_buf);
-    free(&pp->hinv_buf);
-    free(&pp->buf);
-    free(&pp->output);
+    free(pp->window);
+    free(pp->old_windowed_buf);
+    free(pp->hinv_buf);
+    free(pp->buf);
+    free(pp->output);
     kiss_fftr_free(pp->fft);
     kiss_fftr_free(pp->ifft);
     KISS_FFT_FREE(pp->tmp1);
