@@ -17,7 +17,7 @@ int sp_ftbl_loadwav(sp_data *sp, sp_ftbl **ft, const char *filename)
     size = sp_drwav_sampcount(wav);
     *ft = malloc(sizeof(sp_ftbl));
     ftp = *ft;
-    ftp->tbl = malloc(sizeof(SPFLOAT) * (size + 1));
+    ftp->tbl = calloc(1, sizeof(SPFLOAT) * size);
     tbl = ftp->tbl;
     sp_ftbl_init(sp, ftp, size);
     sp_drwav_read_f32(wav, size, tbl);
