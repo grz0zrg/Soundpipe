@@ -1,3 +1,5 @@
+/* This code is placed in the public domain */
+
 #include <stdlib.h>
 #include <math.h>
 #include "soundpipe.h"
@@ -26,6 +28,7 @@ int sp_oscmorph_init(sp_data *sp, sp_oscmorph *osc, sp_ftbl **ft, int nft, SPFLO
     osc->wtpos = 0.0;
     osc->nft = nft;
     uint32_t prev = (uint32_t)ft[0]->size;
+
     for (i = 0; i < nft; i++) {
         if (prev != ft[i]->size) {
             fprintf(stderr, "sp_oscmorph: size mismatch\n");
@@ -42,15 +45,20 @@ int sp_oscmorph_compute(sp_data *sp, sp_oscmorph *osc, SPFLOAT *in, SPFLOAT *out
     SPFLOAT amp, cps, fract, v1, v2;
     SPFLOAT *ft1, *ft2;
     int32_t phs, lobits, pos;
-    SPFLOAT sicvt = osc->tbl[0]->sicvt;
+    SPFLOAT sicvt;
+    SPFLOAT findex;
+    int index;
+    SPFLOAT wtfrac;
 
     /* Use only the fractional part of the position or 1 */
     if (osc->wtpos > 1.0) {
         osc->wtpos -= (int)osc->wtpos;
     }
-    SPFLOAT findex = osc->wtpos * (osc->nft - 1);
-    int index = floor(findex);
-    SPFLOAT wtfrac = findex - index;
+
+    sicvt = osc->tbl[0]->sicvt;
+    findex = osc->wtpos * (osc->nft - 1);
+    wtfrac = findex - index;
+    index = floor(findex);
 
     lobits = osc->tbl[0]->lobits;
     amp = osc->amp;
