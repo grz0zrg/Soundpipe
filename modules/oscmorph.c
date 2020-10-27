@@ -4,6 +4,9 @@
 #include <math.h>
 #include "soundpipe.h"
 
+#define MAXLEN 0x1000000L
+#define PHASEMASK 0x0FFFFFFL
+
 int sp_oscmorph_create(sp_oscmorph **p)
 {
     *p = malloc(sizeof(sp_oscmorph));
@@ -16,18 +19,25 @@ int sp_oscmorph_destroy(sp_oscmorph **p)
     return SP_OK;
 }
 
-int sp_oscmorph_init(sp_data *sp, sp_oscmorph *osc, sp_ftbl **ft, int nft, SPFLOAT iphs)
+int sp_oscmorph_init(sp_data *sp,
+                     sp_oscmorph *osc,
+                     sp_ftbl **ft,
+                     int nft,
+                     SPFLOAT iphs)
 {
     int i;
+    uint32_t tmp;
+    uint32_t prev;
+
     osc->freq = 440.0;
     osc->amp = 0.2;
     osc->tbl = ft;
     osc->iphs = fabs(iphs);
     osc->inc = 0;
-    osc->lphs = ((int32_t)(osc->iphs * SP_FT_MAXLEN)) & SP_FT_PHMASK;
+    osc->lphs = ((int32_t)(osc->iphs * MAXLEN)) & PHASEMASK;
     osc->wtpos = 0.0;
     osc->nft = nft;
-    uint32_t prev = (uint32_t)ft[0]->size;
+    prev = (uint32_t)ft[0]->size;
 
     for (i = 0; i < nft; i++) {
         if (prev != ft[i]->size) {
@@ -36,16 +46,30 @@ int sp_oscmorph_init(sp_data *sp, sp_oscmorph *osc, sp_ftbl **ft, int nft, SPFLO
         }
         prev = (uint32_t)ft[i]->size;
     }
+
+    /* set up constants */
+
+    tmp = MAXLEN / 2;
+
+    osc->nlb = 0;
+    while (tmp >>= 1) osc->nlb++;
+
+    osc->mask = (1 << osc->nlb) - 1;
+    osc->inlb = 1.0 / (1 << osc->nlb);
+    osc->maxlens = 1.0 * MAXLEN / sp->sr;
+
     return SP_OK;
 }
 
-int sp_oscmorph_compute(sp_data *sp, sp_oscmorph *osc, SPFLOAT *in, SPFLOAT *out)
+int sp_oscmorph_compute(sp_data *sp,
+                        sp_oscmorph *osc,
+                        SPFLOAT *in,
+                        SPFLOAT *out)
 {
     sp_ftbl *ftp1;
     SPFLOAT amp, cps, fract, v1, v2;
     SPFLOAT *ft1, *ft2;
-    int32_t phs, lobits, pos;
-    SPFLOAT sicvt;
+    int32_t phs, pos;
     SPFLOAT findex;
     int index;
     SPFLOAT wtfrac;
@@ -55,12 +79,10 @@ int sp_oscmorph_compute(sp_data *sp, sp_oscmorph *osc, SPFLOAT *in, SPFLOAT *out
         osc->wtpos -= (int)osc->wtpos;
     }
 
-    sicvt = osc->tbl[0]->sicvt;
     findex = osc->wtpos * (osc->nft - 1);
-    wtfrac = findex - index;
     index = floor(findex);
+    wtfrac = findex - index;
 
-    lobits = osc->tbl[0]->lobits;
     amp = osc->amp;
     cps = osc->freq;
     phs = osc->lphs;
@@ -73,11 +95,11 @@ int sp_oscmorph_compute(sp_data *sp, sp_oscmorph *osc, SPFLOAT *in, SPFLOAT *out
         ft2 = osc->tbl[index + 1]->tbl;
     }
 
-    osc->inc = (int32_t)lrintf(cps * sicvt);
+    osc->inc = (int32_t)floor(cps * osc->maxlens);
 
-    fract = ((phs) & ftp1->lomask) * ftp1->lodiv;
+    fract = (phs & osc->mask) * osc->inlb;
 
-    pos = phs >> lobits;
+    pos = phs >> osc->nlb;
 
     v1 = (1 - wtfrac) *
         *(ft1 + pos) +
@@ -91,7 +113,7 @@ int sp_oscmorph_compute(sp_data *sp, sp_oscmorph *osc, SPFLOAT *in, SPFLOAT *out
     *out = (v1 + (v2 - v1) * fract) * amp;
 
     phs += osc->inc;
-    phs &= SP_FT_PHMASK;
+    phs &= PHASEMASK;
 
     osc->lphs = phs;
     return SP_OK;

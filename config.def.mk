@@ -85,6 +85,7 @@ peakeq \
 modalres \
 phasewarp \
 tread \
+oscmorph \
 
 TANGLED += \
 tangled/osc.o \
