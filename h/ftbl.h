@@ -4,11 +4,6 @@
 typedef struct sp_ftbl{
     size_t size;
     SPFLOAT *tbl;
-    /* uint32_t lobits; */
-    /* uint32_t lomask; */
-    /* SPFLOAT lodiv; */
-    /* SPFLOAT sicvt; */
-    /* char del; */
 } sp_ftbl;
 
 int sp_ftbl_create(sp_data *sp, sp_ftbl **ft, size_t size);
