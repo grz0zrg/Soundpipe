@@ -153,3 +153,30 @@ void sp_gen_composite(sp_data *sp, sp_ftbl *ft, const char *argstring)
 
     sp_ftbl_destroy(&args);
 }
+
+void sp_gen_sinesum(sp_data *sp, sp_ftbl *ft, const char *argstring)
+{
+    sp_ftbl *args;
+    int32_t phs;
+    SPFLOAT amp;
+    int32_t flen;
+    SPFLOAT tpdlen;
+    int32_t i, n;
+
+    sp_ftbl_create(sp, &args, 1);
+    sp_gen_vals(sp, args, argstring);
+    flen = (int32_t)ft->size;
+    tpdlen = 2.0 * M_PI / (SPFLOAT) flen;
+
+    for (i = (int32_t)args->size; i > 0; i--) {
+        amp = args->tbl[i - 1];
+        if (amp != 0) {
+            for (phs = 0, n = 0; n < ft->size; n++) {
+                ft->tbl[n] += sin(phs * tpdlen) * amp;
+                phs += i;
+                phs %= flen;
+            }
+        }
+    }
+    sp_ftbl_destroy(&args);
+}
