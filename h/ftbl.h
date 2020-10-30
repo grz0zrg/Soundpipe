@@ -15,3 +15,4 @@ int sp_ftbl_loadspa(sp_data *sp, sp_ftbl **ft, const char *filename);
 int sp_gen_vals(sp_data *sp, sp_ftbl *ft, const char *string);
 int sp_gen_sine(sp_data *sp, sp_ftbl *ft);
 void sp_gen_triangle(sp_data *sp, sp_ftbl *ft);
+void sp_gen_composite(sp_data *sp, sp_ftbl *ft, const char *argstring);

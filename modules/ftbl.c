@@ -127,3 +127,29 @@ void sp_gen_triangle(sp_data *sp, sp_ftbl *ft)
         counter += step;
     }
 }
+
+void sp_gen_composite(sp_data *sp, sp_ftbl *ft, const char *argstring)
+{
+    SPFLOAT phs, inc, amp, dc, tpdlen;
+    int i, n;
+    sp_ftbl *args;
+
+    sp_ftbl_create(sp, &args, 1);
+    sp_gen_vals(sp, args, argstring);
+
+    tpdlen = 2 * M_PI / (SPFLOAT) ft->size;
+
+    for (n = 0; n < args->size; n += 4) {
+        inc = args->tbl[n] * tpdlen;
+        amp = args->tbl[n + 1];
+        phs = args->tbl[n + 2] * tpd360;
+        dc = args->tbl[n + 3];
+
+        for (i = 0; i <ft->size ; i++) {
+            ft->tbl[i] += (SPFLOAT) (sin(phs) * amp + dc);
+            if ((phs += inc) >= 2 * M_PI) phs -= 2 * M_PI;
+        }
+    }
+
+    sp_ftbl_destroy(&args);
+}
