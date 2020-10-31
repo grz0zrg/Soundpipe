@@ -4,7 +4,7 @@
 #include <math.h>
 #include "soundpipe.h"
 
-#define MAXLEN 0x1000000L
+#define MAXLEN    0x1000000L
 #define PHASEMASK 0x0FFFFFFL
 
 int sp_oscmorph_create(sp_oscmorph **p)
@@ -49,7 +49,7 @@ int sp_oscmorph_init(sp_data *sp,
 
     /* set up constants */
 
-    tmp = MAXLEN / 2;
+    tmp = MAXLEN / ft[0]->size;
 
     osc->nlb = 0;
     while (tmp >>= 1) osc->nlb++;
@@ -57,7 +57,6 @@ int sp_oscmorph_init(sp_data *sp,
     osc->mask = (1 << osc->nlb) - 1;
     osc->inlb = 1.0 / (1 << osc->nlb);
     osc->maxlens = 1.0 * MAXLEN / sp->sr;
-
     return SP_OK;
 }
 
@@ -95,20 +94,17 @@ int sp_oscmorph_compute(sp_data *sp,
         ft2 = osc->tbl[index + 1]->tbl;
     }
 
-    osc->inc = (int32_t)floor(cps * osc->maxlens);
+    osc->inc = (int32_t)lrintf(cps * osc->maxlens);
 
     fract = (phs & osc->mask) * osc->inlb;
 
     pos = phs >> osc->nlb;
 
-    v1 = (1 - wtfrac) *
-        *(ft1 + pos) +
-        wtfrac *
-        *(ft2 + pos);
+    v1 = (1 - wtfrac) * ft1[pos] + wtfrac * ft2[pos];
     v2 = (1 - wtfrac) *
-        *(ft1 + ((pos + 1) % ftp1->size))+
+        ft1[(pos + 1) % ftp1->size] +
         wtfrac *
-        *(ft2 + ((pos + 1) % ftp1->size));
+        ft2[(pos + 1) % ftp1->size];
 
     *out = (v1 + (v2 - v1) * fract) * amp;
 
