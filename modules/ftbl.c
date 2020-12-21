@@ -16,6 +16,7 @@
 int sp_ftbl_init(sp_data *sp, sp_ftbl *ft, size_t size)
 {
     ft->size = size;
+    memset(ft->tbl, 0, sizeof(SPFLOAT) * (size + 1));
     return SP_OK;
 }
 
