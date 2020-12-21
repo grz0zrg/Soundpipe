@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "lib/dr_wav/sp_dr_wav.h"
 #include "soundpipe.h"
 #include "kiss_fftr.h"
 
@@ -18,7 +19,9 @@
 #define M_PI		3.14159265358979323846
 #endif
 
-static void compute_block(sp_data *sp, sp_paulstretch *p) {
+static void compute_block(sp_data *sp,
+                          sp_paulstretch *p,
+                          drwav *wav) {
     uint32_t istart_pos = floor(p->start_pos);
     uint32_t pos;
     uint32_t i;
@@ -31,19 +34,34 @@ static void compute_block(sp_data *sp, sp_paulstretch *p) {
     SPFLOAT *window = p->window;
     SPFLOAT *output= p->output;
 
-    for (i = 0; i < windowsize; i++) {
-        /* Loop through buffer */
-        pos = (istart_pos + i);
+    /* use internal ftable if wav is NULL
+     * otherwise, read from wav file via drwav
+     */
+    if (wav == NULL) {
+        for (i = 0; i < windowsize; i++) {
+            /* Loop through buffer */
+            pos = (istart_pos + i);
 
-        if (p->wrap) {
-            pos %= p->ft->size;
-        }
+            if (p->wrap) {
+                pos %= p->ft->size;
+            }
 
-        if (pos < p->ft->size) {
-            buf[i] = tbl[pos] * window[i];
-        } else {
-            buf[i] = 0;
+            if (pos < p->ft->size) {
+                buf[i] = tbl[pos] * window[i];
+            } else {
+                buf[i] = 0;
+            }
         }
+    } else {
+        size_t r;
+        sp_drwav_seek_to_sample(wav, istart_pos);
+        r = sp_drwav_read_f32(wav, windowsize, buf);
+
+        /* fill remaining buffer with 0's */
+        for (i = r; i < windowsize; i++) buf[i] = 0;
+
+        /* window */
+        for (i = 0; i < windowsize; i++) buf[i] *= window[i];
     }
 
     kiss_fftr(p->fft, buf, p->tmp1);
@@ -139,7 +157,21 @@ int sp_paulstretch_init(sp_data *sp, sp_paulstretch *p, sp_ftbl *ft, SPFLOAT win
 
 int sp_paulstretch_compute(sp_data *sp, sp_paulstretch *p, SPFLOAT *in, SPFLOAT *out)
 {
-    if (p->counter == 0) compute_block(sp, p);
+    if (p->counter == 0) compute_block(sp, p, NULL);
+
+    *out = p->output[p->counter];
+    p->counter = (p->counter + 1) % p->half_windowsize;
+
+    return SP_OK;
+}
+
+/* use this to read from an opened wavfile via drwav */
+int sp_paulstretch_wavin(sp_data *sp,
+                         sp_paulstretch *p,
+                         drwav *wav,
+                         SPFLOAT *out)
+{
+    if (p->counter == 0) compute_block(sp, p, wav);
 
     *out = p->output[p->counter];
     p->counter = (p->counter + 1) % p->half_windowsize;
