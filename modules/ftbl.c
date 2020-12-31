@@ -6,6 +6,7 @@
 #include <sndfile.h>
 #endif
 #include "soundpipe.h"
+#include "kiss_fftr.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -178,4 +179,34 @@ void sp_gen_sinesum(sp_data *sp, sp_ftbl *ft, const char *argstring)
         }
     }
     sp_ftbl_destroy(&args);
+}
+
+void sp_ftbl_fftcut(sp_ftbl *ft, int cut)
+{
+    kiss_fftr_cfg fft, ifft;
+    kiss_fft_cpx *tmp;
+    int i;
+    SPFLOAT scale;
+
+    fft = kiss_fftr_alloc(ft->size, 0, NULL, NULL);
+    ifft = kiss_fftr_alloc(ft->size, 1, NULL, NULL);
+    tmp = malloc(sizeof(kiss_fft_cpx) * ft->size);
+
+    kiss_fftr(fft, ft->tbl, tmp);
+
+    for (i = cut; i < (ft->size / 2); i++) {
+        tmp[i].r = 0;
+        tmp[i].i = 0;
+    }
+
+    kiss_fftri(ifft, tmp, ft->tbl);
+
+    scale = 1.0 / ft->size;
+    for (i = 0; i < ft->size; i++) {
+        ft->tbl[i] *= scale;
+    }
+
+    free(tmp);
+    kiss_fftr_free(fft);
+    kiss_fftr_free(ifft);
 }
