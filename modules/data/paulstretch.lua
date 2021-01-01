@@ -11,6 +11,25 @@ sptbl["paulstretch"] = {
         destroy = "sp_paulstretch_destroy",
         init = "sp_paulstretch_init",
         compute = "sp_paulstretch_compute",
+        other = {
+            sp_paulstretch_wavin = {
+                description = "stretches input from a wav file via drwav. Use in place of sp_paulstretch_compute.",
+                args = {
+                    {
+                        name = "wav",
+                        type = "drwav *",
+                        description = "a drwav instance opened for reading",
+                        default = "N/A"
+                    },
+                    {
+                        name = "out",
+                        type = "SPFLOAT *",
+                        description = "signal output",
+                        default = "N/A"
+                    }
+                }
+            }
+        }
     },
 
     params = {
