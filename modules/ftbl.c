@@ -17,7 +17,7 @@
 int sp_ftbl_init(sp_data *sp, sp_ftbl *ft, size_t size)
 {
     ft->size = size;
-    memset(ft->tbl, 0, sizeof(SPFLOAT) * (size + 1));
+    memset(ft->tbl, 0, sizeof(SPFLOAT) * size);
     return SP_OK;
 }
 
@@ -26,9 +26,7 @@ int sp_ftbl_create(sp_data *sp, sp_ftbl **ft, size_t size)
     sp_ftbl *ftp;
     *ft = malloc(sizeof(sp_ftbl));
     ftp = *ft;
-    ftp->tbl = malloc(sizeof(SPFLOAT) * (size + 1));
-    memset(ftp->tbl, 0, sizeof(SPFLOAT) * (size + 1));
-
+    ftp->tbl = calloc(1, sizeof(SPFLOAT) * (size + 1));
     sp_ftbl_init(sp, ftp, size);
     return SP_OK;
 }
