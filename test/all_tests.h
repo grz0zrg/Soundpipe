@@ -26,7 +26,7 @@ TEST(t_peakeq, "peakeq", "e0983dd81eba15d20fbe0e8a51a07cf2")
 /* TEST(t_fofilt, "fofilt", "6f38f2fa90f6f1bbd153732b771fe2c0") */
 /* TEST(t_gbuzz, "gbuzz", "e402285a35e9367b975520e8526d3b1f") */
 /* TEST(t_moogladder, "moogladder", "5c2650c0c0374e1faa3c853dae2ac431") */
-/* TEST(t_phasor, "phasor", "e0e96fbadf9736d6e7734028f6557555") */
+TEST(t_phasor, "phasor", "e0e96fbadf9736d6e7734028f6557555")
 /* TEST(t_tone, "tone", "5571f4488385f0f221f4ad0a58665b2b") */
 TEST(t_noise, "noise", "05d1b638e85626876e2b1e3c2cd01a7c")
 /* TEST(t_pareq, "pareq", "5a9df59248a8fc15d543a81a8032019c") */
