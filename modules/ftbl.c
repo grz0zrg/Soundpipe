@@ -21,13 +21,27 @@ int sp_ftbl_create(sp_data *sp, sp_ftbl **ft, size_t size)
     ftp = *ft;
     ftp->tbl = calloc(1, sizeof(SPFLOAT) * (size + 1));
     ftp->size = size;
+    ftp->del = 1;
+    return SP_OK;
+}
+
+/* like create, but use externally managed memory */
+
+int sp_ftbl_bind(sp_data *sp, sp_ftbl **ft, SPFLOAT *tbl, size_t size)
+{
+    sp_ftbl *ftp;
+    *ft = malloc(sizeof(sp_ftbl));
+    ftp = *ft;
+    ftp->tbl = tbl;
+    ftp->size = size;
+    ftp->del = 0;
     return SP_OK;
 }
 
 int sp_ftbl_destroy(sp_ftbl **ft)
 {
     sp_ftbl *ftp = *ft;
-    free(ftp->tbl);
+    if (ftp->del) free(ftp->tbl);
     free(*ft);
     return SP_OK;
 }

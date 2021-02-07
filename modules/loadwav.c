@@ -15,11 +15,13 @@ int sp_ftbl_loadwav(sp_data *sp, sp_ftbl **ft, const char *filename)
     if (!sp_drwav_init_file(wav, filename)) return SP_NOT_OK;
 
     size = sp_drwav_sampcount(wav);
-    *ft = malloc(sizeof(sp_ftbl));
+
+    sp_ftbl_create(sp, ft, size);
+
     ftp = *ft;
-    ftp->tbl = calloc(1, sizeof(SPFLOAT) * size);
-    ftp->size = size;
+
     tbl = ftp->tbl;
+
     sp_drwav_read_f32(wav, size, tbl);
     sp_drwav_uninit(wav);
     free(wav);

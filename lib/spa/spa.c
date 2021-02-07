@@ -77,15 +77,12 @@ int sp_ftbl_loadspa(sp_data *sp, sp_ftbl **ft, const char *filename)
     sp_audio spa;
     size_t size;
 
-    *ft = malloc(sizeof(sp_ftbl));
-    ftp = *ft;
 
     spa_open(sp, &spa, filename, SPA_READ);
 
     size = spa.header.len;
-
-    ftp->tbl = malloc(sizeof(SPFLOAT) * (size + 1));
-    ftp->size = size;
+    sp_ftbl_create(sp, ft, size);
+    ftp = *ft;
 
     spa_read_buf(sp, &spa, ftp->tbl, ftp->size);
     spa_close(&spa);
