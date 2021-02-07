@@ -14,20 +14,13 @@
 
 #define tpd360 0.0174532925199433
 
-int sp_ftbl_init(sp_data *sp, sp_ftbl *ft, size_t size)
-{
-    ft->size = size;
-    memset(ft->tbl, 0, sizeof(SPFLOAT) * size);
-    return SP_OK;
-}
-
 int sp_ftbl_create(sp_data *sp, sp_ftbl **ft, size_t size)
 {
     sp_ftbl *ftp;
     *ft = malloc(sizeof(sp_ftbl));
     ftp = *ft;
     ftp->tbl = calloc(1, sizeof(SPFLOAT) * (size + 1));
-    sp_ftbl_init(sp, ftp, size);
+    ftp->size = size;
     return SP_OK;
 }
 

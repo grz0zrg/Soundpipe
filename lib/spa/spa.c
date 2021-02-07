@@ -85,7 +85,7 @@ int sp_ftbl_loadspa(sp_data *sp, sp_ftbl **ft, const char *filename)
     size = spa.header.len;
 
     ftp->tbl = malloc(sizeof(SPFLOAT) * (size + 1));
-    sp_ftbl_init(sp, ftp, size);
+    ftp->size = size;
 
     spa_read_buf(sp, &spa, ftp->tbl, ftp->size);
     spa_close(&spa);
