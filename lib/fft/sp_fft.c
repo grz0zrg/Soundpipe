@@ -26,13 +26,13 @@ void sp_fft_init(sp_fft *fft, int M)
 
 void sp_fftr(sp_fft *fft, SPFLOAT *buf, int FFTsize)
 {
-    int M = log2(FFTsize);
+    int M = LOG2(FFTsize);
     rffts1(buf, M, fft->utbl, fft->BRLow);
 }
 
 void sp_fft_cpx(sp_fft *fft, SPFLOAT *buf, int FFTsize)
 {
-    int M = log2(FFTsize);
+    int M = LOG2(FFTsize);
     ffts1(buf, M, fft->utbl, fft->BRLowCpx);
 }
 
@@ -40,7 +40,7 @@ void sp_fft_cpx(sp_fft *fft, SPFLOAT *buf, int FFTsize)
 
 void sp_ifftr(sp_fft *fft, SPFLOAT *buf, int FFTsize)
 {
-    int M = log2(FFTsize);
+    int M = LOG2(FFTsize);
     riffts1(buf, M, fft->utbl, fft->BRLow);
 }
 
