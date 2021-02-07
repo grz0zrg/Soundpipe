@@ -15,6 +15,8 @@ void sk_phasor_init(sk_phasor *ph, int sr, SKFLT iphs);
 void sk_phasor_freq(sk_phasor *ph, SKFLT freq);
 #line 113 "phasor.org"
 SKFLT sk_phasor_tick(sk_phasor *ph);
+#line 159 "phasor.org"
+void sk_phasor_reset(sk_phasor *phs, SKFLT val);
 #line 41 "phasor.org"
 #ifdef SK_PHASOR_PRIV
 #line 70 "phasor.org"

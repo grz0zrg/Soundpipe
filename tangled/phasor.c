@@ -37,4 +37,10 @@ SKFLT sk_phasor_tick(sk_phasor *ph)
 
     return out;
 }
+#line 164 "phasor.org"
+void sk_phasor_reset(sk_phasor *phs, SKFLT val)
+{
+    if (val >= 0) phs->phs = val;
+    else phs->phs = 0;
+}
 #line 49 "phasor.org"

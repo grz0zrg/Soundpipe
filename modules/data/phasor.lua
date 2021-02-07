@@ -11,6 +11,19 @@ sptbl["phasor"] = {
         destroy = "sp_phasor_destroy",
         init = "sp_phasor_init",
         compute = "sp_phasor_compute",
+        other = {
+            sp_phasor_reset = {
+                description = "resets the phase to a value.",
+                args = {
+                    {
+                        name = "value",
+                        type = "SPFLOAT",
+                        description = "value to reset to.",
+                        default = 0
+                    },
+                }
+            }
+        }
     },
 
     params = {

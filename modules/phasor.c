@@ -43,3 +43,9 @@ int sp_phasor_compute(sp_data *sp, sp_phasor *p, SPFLOAT *in, SPFLOAT *out)
     *out = sk_phasor_tick(p->phasor);
     return SP_OK;
 }
+
+int sp_phasor_reset(sp_data *sp, sp_phasor *p, SPFLOAT iphs)
+{
+    sk_phasor_reset(p->phasor, iphs);
+    return SP_OK;
+}
